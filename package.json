@@ -1,0 +1,25 @@
+{
+  "name": "covid_tracker_bot",
+  "version": "1.0.0",
+  "description": "A telegram bot to track Covid19 statistics.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": [
+    "bot",
+    "telegram",
+    "nodejs",
+    "server"
+  ],
+  "author": "Sivan",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "node-telegram-bot-api": "^0.40.0",
+    "now": "^17.1.1"
+  }
+}
