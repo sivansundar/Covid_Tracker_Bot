@@ -1,18 +1,24 @@
 var express = require('express');
 var packageInfo = require('./package.json');
+var where = require("lodash");
+
 const axios = require('axios');
 const config = require('./config');
 
 var token = config.SECRET_TOKEN.toString();
-//var token = "1269749304:AAHYGGnKCKlsp9EGn-J_4uMQk32rZtjOqQ0"
+
 var result;
-var Array;
+let responseArray;
+
+var json = '[{"user": "a", "age": 20}, {"user": "b", "age": 30}, {"user": "c", "age": 40}]';
+
+
 
 axios.get('https://api.covid19india.org/data.json')
   .then(response => {
    // console.log(response.data.statewise);
-Array = response.data.statewise[1].state;
-    console.log(Array);
+   responseArray = response.data.statewise;
+    console.log(responseArray);
     //console.log(response.data.state);
     //result = response.data.url;
   })
@@ -20,21 +26,64 @@ Array = response.data.statewise[1].state;
     console.log(error);
   });
 
+
 var Bot = require('node-telegram-bot-api'),
     bot = new Bot(token, { polling: true });
 
     console.log('bot server started...');
 
-    var b = "Bb"
+    var maharashtra = "MH"
+    var TamilNadu = "TN"
+
+    var botMsg;
 
     bot.on('message', (msg) => {
-    
-      var Hi = "mh";
-      if (msg.text.toString().toLowerCase().indexOf(Hi) === 0) {
-      bot.sendMessage(msg.chat.id, Array);
-      } 
+      
+      //If the State is Maharashtra
+      if (msg.text.toString().toLowerCase().indexOf(maharashtra.toLowerCase() || maharashtra.toUpperCase()) === 0) {
+
+        getMaharashtraDetails(msg, maharashtra);
+    } 
+
+    if (msg.text.toString().toLowerCase().indexOf(TamilNadu.toLowerCase() || TamilNadu.toUpperCase()) === 0) {
+
+      getTamilNaduDetails(msg, TamilNadu);
+  } 
+
+  
           
       });
+
+    async function getMaharashtraDetails (msg, state) {
+      
+    let results = responseArray.filter(obj => obj.statecode == state);
+    console.log("######################\n\n\n")
+    console.log(results);
+      
+    let activeCasesValue = results.map(a => a.active);
+    let confirmedCasesValue = results.map(a => a.confirmed);
+    console.log(s);
+
+     var value = "Confirmed cases : " + confirmedCasesValue + " \nActive cases : " + activeCasesValue;
+      bot.sendMessage(msg.chat.id, "Maharashtra \n\n" + value);
+      
+    }
+
+
+    async function getTamilNaduDetails (msg, state) {
+      
+      let results = responseArray.filter(obj => obj.statecode == state);
+      console.log("######################\n\n\n")
+      console.log(results);
+        
+      let activeCasesValue = results.map(a => a.active);
+      let confirmedCasesValue = results.map(a => a.confirmed);
+      console.log(s);
+  
+       var value = "Confirmed cases : " + confirmedCasesValue + " \nActive cases : " + activeCasesValue;
+        bot.sendMessage(msg.chat.id, "TamilNadu \n\n" + value);
+        
+      }
 
 var app = express();
 
