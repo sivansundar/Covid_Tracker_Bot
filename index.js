@@ -1,38 +1,52 @@
 var express = require('express');
 var packageInfo = require('./package.json');
-var where = require("lodash");
 
 const axios = require('axios');
 const config = require('./config');
 
 var token = config.SECRET_TOKEN.toString();
 
-var result;
+
 let responseArray;
 
-var states = ['TN', "MH", "KA", "RJ", "AP", "AR", "AS", "BR", "CG", "GA", "GJ", "HR", "HP", "JH", "KA", "KL", "MP", "MH", "MN",
- "ML", "MZ", "NL", "OD", "PB", "RJ", "SK", "TN", "TS", "TR", "UP", "UK", "WB", "AN", "CH", "DD", "DL", "JK", "LA", "LD", "PY"
+var states = ['TN', "MH", "KA", "RJ", "AP", "AR", "AS", "BR", "CG", "GA", "GJ", "HR", "HP", "JH", "KL", "MP", "MN",
+ "ML", "MZ", "NL", "OD", "PB", "RJ", "SK", "TS", "TR", "UP", "UK", "WB", "AN", "CH", "DD", "DL", "JK", "LA", "LD", "PY"
 
  ];
 
-var help = "Welcome to the Covid Tracker Bot. The bot helps you to retrieve live stats of each state affected by the deadly virus in India. Enter the state code to view covid stats." + 
-"\n\n" + "Eg : ( TN, KA, MH, KL, UP etc )";
+ var help = "Welcome to the Covid Tracker Bot. The bot helps you to retrieve live stats of each state affected by the deadly virus in India. Enter the state code to view covid stats." + 
+ "\n\n" + "Eg : ( TN, KA, MH, KL, UP etc ) \n\n\n" + "Bot developed by Sivan.\n" +
+ "http://www.twitter.com/sivansundar \nhttp://www.github.com/sivansundar ";
 
-var stateValue;
+ var stateValue;
 
-
-
-//Pull Json data
-axios.get('https://api.covid19india.org/data.json')
-  .then(response => {
-  
-   responseArray = response.data.statewise;
-
-  
-  })
-  .catch(error => {
-    console.log(error);
-  });
+ //Initial run when the project is deployed.
+ getJSONData();
+ 
+ //Pull JSON data every 1 hour
+ const interval = setInterval(() => {
+   console.log('Job Executed!');
+   getJSONData();
+ }, 3600000);
+ 
+ 
+ 
+ 
+ async function getJSONData() {
+ 
+ axios.get('https://api.covid19india.org/data.json')
+   .then(response => {
+   
+    responseArray = response.data.statewise;
+    console.log("Get function executed");
+   
+   })
+   .catch(error => {
+     console.log(error);
+   });
+ 
+ }
+ 
 
 
 var Bot = require('node-telegram-bot-api'),
@@ -40,30 +54,26 @@ var Bot = require('node-telegram-bot-api'),
 
     console.log('bot server started...');
 
-    var maharashtra = "MH"
-    var TamilNadu = "TN"
-    var Karnataka = "KA"
-
-    
-
-
     bot.on('message', (msg) => {
 
     if(msg.text.toString() == "/help") {
       bot.sendMessage(msg.chat.id, help.toString());
 
     }
+    else {
+      
     
      for(var i = 0 ; states.length ; i++) {
-       if(msg.text.toString() == states[i].toString()) {
-         console.log("Position is : " + i);
-         stateValue = states[i].toString();
-        
-         break
-       }
-     }
+      if(msg.text.toString() == states[i].toString()) {
+        console.log("Position is : " + i);
+        stateValue = states[i].toString();
+       
+        break;
+      }
+    }
 
-     getDetails(msg, stateValue)    
+    getDetails(msg, stateValue)   
+    } 
           
       });
 
