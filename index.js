@@ -10,17 +10,25 @@ var token = config.SECRET_TOKEN.toString();
 var result;
 let responseArray;
 
-var json = '[{"user": "a", "age": 20}, {"user": "b", "age": 30}, {"user": "c", "age": 40}]';
+var states = ['TN', "MH", "KA", "RJ", "AP", "AR", "AS", "BR", "CG", "GA", "GJ", "HR", "HP", "JH", "KA", "KL", "MP", "MH", "MN",
+ "ML", "MZ", "NL", "OD", "PB", "RJ", "SK", "TN", "TS", "TR", "UP", "UK", "WB", "AN", "CH", "DD", "DL", "JK", "LA", "LD", "PY"
+
+ ];
+
+var help = "Welcome to the Covid Tracker Bot. The bot helps you to retrieve live stats of each state affected by the deadly virus in India. Enter the state code to view covid stats." + 
+"\n\n" + "Eg : ( TN, KA, MH, KL, UP etc )";
+
+var stateValue;
 
 
 
+//Pull Json data
 axios.get('https://api.covid19india.org/data.json')
   .then(response => {
-   // console.log(response.data.statewise);
+  
    responseArray = response.data.statewise;
-    console.log(responseArray);
-    //console.log(response.data.state);
-    //result = response.data.url;
+
+  
   })
   .catch(error => {
     console.log(error);
@@ -34,56 +42,67 @@ var Bot = require('node-telegram-bot-api'),
 
     var maharashtra = "MH"
     var TamilNadu = "TN"
+    var Karnataka = "KA"
 
-    var botMsg;
+    
+
 
     bot.on('message', (msg) => {
-      
-      //If the State is Maharashtra
-      if (msg.text.toString().toLowerCase().indexOf(maharashtra.toLowerCase() || maharashtra.toUpperCase()) === 0) {
 
-        getMaharashtraDetails(msg, maharashtra);
-    } 
+    if(msg.text.toString() == "/help") {
+      bot.sendMessage(msg.chat.id, help.toString());
 
-    if (msg.text.toString().toLowerCase().indexOf(TamilNadu.toLowerCase() || TamilNadu.toUpperCase()) === 0) {
+    }
+    
+     for(var i = 0 ; states.length ; i++) {
+       if(msg.text.toString() == states[i].toString()) {
+         console.log("Position is : " + i);
+         stateValue = states[i].toString();
+        
+         break
+       }
+     }
 
-      getTamilNaduDetails(msg, TamilNadu);
-  } 
-
-  
+     getDetails(msg, stateValue)    
           
       });
 
-    async function getMaharashtraDetails (msg, state) {
       
-    let results = responseArray.filter(obj => obj.statecode == state);
-    console.log("######################\n\n\n")
-    console.log(results);
-      
-    let activeCasesValue = results.map(a => a.active);
-    let confirmedCasesValue = results.map(a => a.confirmed);
-    console.log(s);
-
-     var value = "Confirmed cases : " + confirmedCasesValue + " \nActive cases : " + activeCasesValue;
-      bot.sendMessage(msg.chat.id, "Maharashtra \n\n" + value);
-      
-    }
 
 
-    async function getTamilNaduDetails (msg, state) {
+    async function getDetails (msg, state) {
       
       let results = responseArray.filter(obj => obj.statecode == state);
       console.log("######################\n\n\n")
       console.log(results);
         
-      let activeCasesValue = results.map(a => a.active);
-      let confirmedCasesValue = results.map(a => a.confirmed);
-      console.log(s);
   
-       var value = "Confirmed cases : " + confirmedCasesValue + " \nActive cases : " + activeCasesValue;
-        bot.sendMessage(msg.chat.id, "TamilNadu \n\n" + value);
+      let val = formatDetails(results)
+     
+        bot.sendMessage(msg.chat.id, val.toString());
         
       }
+  
+      function formatDetails(results) {
+        let stateName = results.map(a => a.state);
+        let activeCasesValue = results.map(a => a.active);
+        let confirmedCasesValue = results.map(a => a.confirmed);
+        let deathsValue = results.map(a => a.deaths);
+        let deltaconfirmedValue = results.map(a => a.deltaconfirmed);
+        let deltadeathsValue = results.map(a => a.deltadeaths);
+        let deltarecoveredValue = results.map(a =>  a.deltarecovered);
+        let lastupdatedtimeValue = results.map(a => a.lastupdatedtime);
+        let recovered = results.map(a => a.recovered);
+
+        let value = stateName + "\n\n"+"Active cases : " + activeCasesValue + "\n"
+        + "Confirmed Cases : " + confirmedCasesValue + " ( " + deltaconfirmedValue + " ⭡ )" + "\n"
+        + "Death Value : " + deathsValue + " ( " + deltadeathsValue + " ⭡ )" + "\n"
+        + "Recovered Value : " + recovered + " ( " + deltarecoveredValue + " ⭡ )\n\n"
+        + "Last updated : " + lastupdatedtimeValue;
+
+        return value;
+      }
+  
 
 var app = express();
 
