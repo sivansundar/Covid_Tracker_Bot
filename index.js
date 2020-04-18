@@ -3,8 +3,8 @@ var packageInfo = require('./package.json');
 
 const axios = require('axios');
 
-var token = "1269749304:AAHYGGnKCKlsp9EGn-J_4uMQk32rZtjOqQ0"
-//process.env.token.toString();
+var token = process.env.token.toString();
+
 
 
 let responseArray;
