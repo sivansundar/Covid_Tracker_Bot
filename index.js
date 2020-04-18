@@ -4,13 +4,13 @@ var packageInfo = require('./package.json');
 const axios = require('axios');
 const config = require('./config');
 
-var token = config.SECRET_TOKEN.toString();
+var token = process.env.token.toString();
 
 
 let responseArray;
 
 var states = ['TN', "MH", "KA", "RJ", "AP", "AR", "AS", "BR", "CG", "GA", "GJ", "HR", "HP", "JH", "KL", "MP", "MN",
- "ML", "MZ", "NL", "OD", "PB", "RJ", "SK", "TS", "TR", "UP", "UK", "WB", "AN", "CH", "DD", "DL", "JK", "LA", "LD", "PY"
+ "ML", "MZ", "NL", "OD", "PB", "RJ", "SK", "TS", "TR", "UP", "UK", "WB", "AN", "CH", "DD", "DL", "JK", "LA", "LD", "PY" 
 
  ];
 
