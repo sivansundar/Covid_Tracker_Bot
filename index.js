@@ -106,8 +106,8 @@ var Bot = require('node-telegram-bot-api'),
 
         let value = stateName + "\n\n"+"Active cases : " + activeCasesValue + "\n"
         + "Confirmed Cases : " + confirmedCasesValue + " ( " + deltaconfirmedValue + " ⭡ )" + "\n"
-        + "Death Value : " + deathsValue + " ( " + deltadeathsValue + " ⭡ )" + "\n"
-        + "Recovered Value : " + recovered + " ( " + deltarecoveredValue + " ⭡ )\n\n"
+        + "Deaths : " + deathsValue + " ( " + deltadeathsValue + " ⭡ )" + "\n"
+        + "Recovered : " + recovered + " ( " + deltarecoveredValue + " ⭡ )\n\n"
         + "Last updated : " + lastupdatedtimeValue;
 
         return value;
